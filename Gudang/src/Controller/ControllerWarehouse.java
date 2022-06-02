@@ -19,9 +19,9 @@ import View.ViewWarehouse;
 public class ControllerWarehouse {
     ModelWarehouseImpls modelWarehouse;
     ViewWarehouse gudangView;
-    private int dataTerpilih;
+    private Integer dataTerpilih;
     private String namaBarangTerpilih;
-    private String[] dataClicked = new String[7];
+    
     public ControllerWarehouse(ModelWarehouseImpls modelWarehouse, ViewWarehouse gudangView) {
         this.modelWarehouse = modelWarehouse;
         this.gudangView = gudangView;
@@ -43,24 +43,33 @@ public class ControllerWarehouse {
                int baris = gudangView.tabel.getSelectedRow();
                data = gudangView.tabel.getModel().getValueAt(gudangView.tabel.getSelectedRow(),6).toString();
                dataTerpilih = Integer.parseInt(data);
-               dataClicked[6] = gudangView.tabel.getModel().getValueAt(gudangView.tabel.getSelectedRow(),6).toString();
-               dataClicked[0] = gudangView.tabel.getValueAt(baris, 0).toString();
-               dataClicked[1] = gudangView.tabel.getValueAt(baris, 1).toString();
-               dataClicked[2] = gudangView.tabel.getValueAt(baris, 2).toString();
-               dataClicked[3] = gudangView.tabel.getValueAt(baris, 3).toString();
-               dataClicked[4] = gudangView.tabel.getValueAt(baris, 4).toString();
-               dataClicked[5] = gudangView.tabel.getValueAt(baris, 5).toString();
-               namaBarangTerpilih = gudangView.tabel.getValueAt(baris, 0).toString();
-               gudangView.setNbarang(dataClicked[0]);
-               gudangView.setJbarang(dataClicked[1]);
-               gudangView.setJenisbarang(dataClicked[2]);
-               gudangView.setHbarang(dataClicked[3]);
+               namaBarangTerpilih = gudangView.tabel.getValueAt(baris, 0).toString();          
+               gudangView.setNbarang(gudangView.tabel.getValueAt(baris, 0).toString());
+               gudangView.setJbarang(gudangView.tabel.getValueAt(baris, 1).toString());
+               gudangView.setJenisbarang(gudangView.tabel.getValueAt(baris, 2).toString());
+               gudangView.setHbarang(gudangView.tabel.getValueAt(baris, 3).toString());
    }
         });
 
         gudangView.btnTambah.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent ae){
+                try{
+                if(gudangView.getNamaBarang().isBlank()){ 
+                    throw new IllegalArgumentException("Nama Barang belum terisi");
+                }
+                if(gudangView.getJumlahBarang().isBlank()){
+                     throw new IllegalArgumentException("Jumlah Barang belum terisi");
+                }
+                if(gudangView.getJenisBarang().isBlank()){
+                    
+                     throw new IllegalArgumentException("Jenis Barang belum terisi");
+                }
+                if(gudangView.getHargaBarang().isBlank()){
+                     throw new IllegalArgumentException("Harga Barang belum terisi");
+                }
+               
+                
                 String nama = gudangView.getNamaBarang();
                 int jumlah = Integer.parseInt(gudangView.getJumlahBarang());
                 String jenis = gudangView.getJenisBarang();
@@ -69,26 +78,56 @@ public class ControllerWarehouse {
                 String dataWarehouse[][] = modelWarehouse.readData();
                 gudangView.tabel.setModel((new JTable(dataWarehouse, gudangView.namaKolom)).getModel());
                 gudangView.tabel.removeColumn(gudangView.tabel.getColumnModel().getColumn(6));
+                gudangView.setNbarang("");
+                gudangView.setJbarang("");
+                gudangView.setJenisbarang("");
+                gudangView.setHbarang("");
+            }catch(Exception error){
+                JOptionPane.showMessageDialog(null, error.getMessage());
             }
+        }
+            
         });
         
         gudangView.btnUpdate.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent ae){
-
+                try{
+                if(dataTerpilih == null){
+                    throw new IllegalArgumentException("Anda belum memilih barang yang ingin di-update");
+                }
                 int id = dataTerpilih;
 
-
+                if(gudangView.getNamaBarang().isBlank()){ 
+                    throw new IllegalArgumentException("Nama Barang belum terisi");
+                }
+                if(gudangView.getJumlahBarang().isBlank()){
+                     throw new IllegalArgumentException("Jumlah Barang belum terisi");
+                }
+                if(gudangView.getJenisBarang().isBlank()){
+                    
+                     throw new IllegalArgumentException("Jenis Barang belum terisi");
+                }
+                if(gudangView.getHargaBarang().isBlank()){
+                     throw new IllegalArgumentException("Harga Barang belum terisi");
+                }
                 String nama = gudangView.getNamaBarang();
                 int jumlah = Integer.parseInt(gudangView.getJumlahBarang());
                 String jenis = gudangView.getJenisBarang();
                 int harga = Integer.parseInt(gudangView.getHargaBarang());
                 modelWarehouse.updateData(id, nama, jumlah, jenis, harga);
-
                 String dataWarehouse[][] = modelWarehouse.readData();
                 gudangView.tabel.setModel((new JTable(dataWarehouse, gudangView.namaKolom)).getModel());
                 gudangView.tabel.removeColumn(gudangView.tabel.getColumnModel().getColumn(6));
-
+                dataTerpilih = null;
+                gudangView.setNbarang("");
+                gudangView.setJbarang("");
+                gudangView.setJenisbarang("");
+                gudangView.setHbarang("");
+                }catch(Exception error){
+                    JOptionPane.showMessageDialog(null, error.getMessage());
+                }
+                
             }
         });
         
@@ -105,8 +144,12 @@ public class ControllerWarehouse {
         gudangView.btnDelete.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent ae){
-               
+               try{
+                if(dataTerpilih == null){
+                    throw new IllegalArgumentException("Anda belum memilih barang yang ingin dihapus");
+                }
                 int id = dataTerpilih;
+                
                 String namaBarang = namaBarangTerpilih;
                 int input = JOptionPane.showConfirmDialog(null,
                 "Apa anda ingin menghapus barang " + namaBarang + "?", "Pilih Opsi...", JOptionPane.YES_NO_OPTION);
@@ -116,11 +159,17 @@ public class ControllerWarehouse {
                     String dataWarehouse[][] = modelWarehouse.readData();
                     gudangView.tabel.setModel((new JTable(dataWarehouse, gudangView.namaKolom)).getModel());
                     gudangView.tabel.removeColumn(gudangView.tabel.getColumnModel().getColumn(6));
+                    dataTerpilih = null;
+                    gudangView.setNbarang("");
+                    gudangView.setJbarang("");
+                    gudangView.setJenisbarang("");
+                    gudangView.setHbarang("");
                 }else{
                     JOptionPane.showMessageDialog(null, "Tidak Jadi Dihapus");
                 }
-                   
-              
+            }catch(Exception e){
+                 JOptionPane.showMessageDialog(null, e.getMessage());
+            }
             }
         });
     }

@@ -10,9 +10,9 @@ package Model;
  * @author user
  */
 public interface ModelWarehouse {
-    int getBanyakData();
-    String[][] readData();
-    void insertData(String nama, int jumlah, String jenis, int harga);
-    void updateData(int id, String nama, int jumlah, String jenis, int harga);
-    void deleteData (int id);
+    int getBanyakData(); //mengambil banyak data dari db
+    String[][] readData(); //mengambil data dari db dengan return array string
+    void insertData(String nama, int jumlah, String jenis, int harga); //memasukkan data ke db
+    void updateData(int id, String nama, int jumlah, String jenis, int harga); //untuk update data
+    void deleteData (int id); //untuk menghapus data
 }
